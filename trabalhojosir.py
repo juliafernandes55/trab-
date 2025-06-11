@@ -3,16 +3,14 @@ import random
 import io
 from datetime import datetime
 
-# CONFIG PÁGINA
 st.set_page_config(page_title="Recomendador de Looks", page_icon="👗", layout="centered")
 st.title("👗 Recomendador de Looks Personalizado")
 st.markdown("Responda algumas perguntas e receba uma sugestão de look com a sua cara!")
 
 # PERGUNTAS DO FORMULÁRIO
 ocasião = st.selectbox("1️⃣ Qual a ocasião?", [ 
-    "Faculdade", "Escola", "Shopping", "Date", "Praia",
-    "Festa / Balada", "Piquenique", "Museu", "Brunch",
-    "Churrasco", "Cinema", "Teatro"
+    "Faculdade", "Shopping", "Date", "Praia", "Festa / Balada",
+    "Museu", "Brunch", "Churrasco", "Cinema", "Teatro"
 ])
 
 estilo = st.selectbox("2️⃣ Qual estilo você prefere?", [
@@ -47,128 +45,92 @@ acessorios = st.radio("9️⃣ Curte usar acessórios?", [
     "Sim, amo!", "Apenas alguns", "Prefiro evitar"
 ])
 
-foto = st.file_uploader("📷 Quer subir uma foto pra gente entender sua vibe de hoje?", type=["jpg", "jpeg", "png"])
-
-# BASES DE DADOS
-acessorios_por_estilo = {
-    "Básico": ["argolas pequenas", "relógio simples", "bolsa transversal"],
-    "Fashionista": ["óculos escuros estilosos", "brincos grandes", "cinto marcante"],
-    "Esportivo": ["boné", "mochilinha", "meia alta estilizada"],
-    "Romântico": ["tiara ou presilha", "colar delicado", "bolsa de palha"],
-    "Despojado": ["pulseira de miçanga", "anel colorido", "bucket hat"]
+# BANCO DE DADOS DE OPÇÕES
+partes_cima = {
+    "Calor": ["regata soltinha", "cropped leve", "blusa de alça"],
+    "Frio": ["suéter quentinho", "blusa de gola alta", "moletom estiloso"],
+    "Ameno": ["camisa leve", "blusa de manga longa", "cardigan fofo"],
+    "Chuvoso": ["jaqueta impermeável", "capa estilosa", "blusa com capuz"]
 }
 
-paletas = {
-    "Calor": "https://i.pinimg.com/564x/67/ff/4a/67ff4a35439c31ea2ab53d5eb7e5a0ae.jpg",
-    "Frio": "https://i.pinimg.com/564x/94/49/ba/9449ba7bcb305108de7bde1e43ff635e.jpg",
-    "Ameno": "https://i.pinimg.com/564x/cf/99/41/cf99411b1e4f1b8a456cbbed3dbdc7c7.jpg",
-    "Chuvoso": "https://i.pinimg.com/564x/79/23/95/792395b59bc25295a2798029e14f2cb1.jpg"
+partes_baixo = {
+    "Básico": ["jeans reto", "short jeans", "legging confortável"],
+    "Fashionista": ["saia midi estampada", "calça cargo", "minissaia de couro"],
+    "Esportivo": ["calça jogger", "short de treino", "legging com recortes"],
+    "Romântico": ["saia rodada", "vestido floral curto", "short de linho"],
+    "Despojado": ["calça rasgada", "short estampado", "bermuda jeans"]
 }
 
-imagens_ocasião = {
-    "Date": "https://i.pinimg.com/564x/80/6b/ba/806bbad4eec9f2fef0bc646118c6ec2c.jpg",
-    "Teatro": "https://i.pinimg.com/564x/57/ef/2c/57ef2c2bfe1a1d23cb9c14850c0131fc.jpg"
-}
-
-sugestoes_exclusivas = {
-    "Date": "Vestido midi + sandália delicada + bolsa pequena",
-    "Teatro": "Macacão elegante + blazer + sapato fechado"
-}
-
-partes_de_cima = {
-    "Calor": ["Regata soltinha", "Cropped leve", "Blusa ciganinha"],
-    "Frio": ["Blusa de lã", "Tricô oversized", "Moletom estiloso"],
-    "Ameno": ["Camisa leve", "Blusa de manga longa", "Cardigan fofo"],
-    "Chuvoso": ["Capa estilosa", "Jaqueta impermeável", "Blusa com capuz"]
-}
-
-partes_de_baixo = {
-    "Básico": ["calça jeans", "short jeans", "legging"],
-    "Fashionista": ["calça cargo", "saia midi", "minissaia de couro"],
-    "Esportivo": ["short de academia", "calça jogger", "legging com recortes"],
-    "Romântico": ["saia rodada", "vestido floral", "short de linho"],
-    "Despojado": ["bermuda jeans", "calça rasgada", "short estampado"]
-}
-
-calçados_por_estilo = {
-    "Tênis": ["tênis branco", "tênis plataforma", "tênis chunky"],
+calçados = {
+    "Tênis": ["tênis branco", "tênis chunky", "tênis plataforma"],
     "Sandália": ["rasteirinha", "sandália plataforma", "sandália de tiras"],
     "Salto": ["salto grosso", "scarpin", "salto bloco confortável"],
     "Bota": ["coturno", "bota cano médio", "bota tratorada"],
     "Tanto faz": ["tênis estiloso", "sandália confortável", "bota leve"]
 }
 
-# LÓGICA DE RECOMENDAÇÃO
+acessorios_por_estilo = {
+    "Básico": ["relógio simples", "bolsa transversal"],
+    "Fashionista": ["óculos escuros estilosos", "brincos grandes"],
+    "Esportivo": ["boné", "mochilinha"],
+    "Romântico": ["colar delicado", "tiara ou presilha"],
+    "Despojado": ["pulseira de miçanga", "bucket hat"]
+}
+
+cores = {
+    "Coloridão": "em cores vibrantes 🌈",
+    "Tons pastéis": "em tons suaves 💗",
+    "Neutro e elegante": "em neutros chiques 🤍",
+    "Preto sempre": "em preto total 🖤"
+}
+
+# LÓGICA DE MONTAGEM
 def montar_look():
-    if ocasião in sugestoes_exclusivas:
-        return sugestoes_exclusivas[ocasião], imagens_ocasião.get(ocasião)
+    topo = random.choice(partes_cima[clima])
+    base = random.choice(partes_baixo[estilo])
+    sapato = random.choice(calçados[calçado_preferido])
 
-    parte_cima = random.choice(partes_de_cima[clima])
-    parte_baixo = random.choice(partes_de_baixo[estilo])
-    calcado = random.choice(calçados_por_estilo[calçado_preferido])
-
-    # Ajuste por HUMOR
     if humor == "Preguiçosa":
-        parte_cima = "Camiseta oversized"
-        parte_baixo = "Moletom estiloso"
+        topo = "camiseta oversized"
+        base = "moletom estiloso"
     elif humor == "Pronta pra brilhar":
-        parte_cima += " com brilho"
+        topo += " com brilho ✨"
     
-    # Ajuste por LOCOMOÇÃO
-    if locomocao in ["A pé", "Transporte público"] and calçado_preferido == "Salto":
-        calcado = "tênis confortável"
-
-    # Ajuste por TEMPO FORA
     if tempo_fora == "O dia inteiro":
-        parte_cima += " + sobreposição leve"
+        topo += " com sobreposição leve"
 
-    # VIBE DE COR
-    cor_map = {
-        "Coloridão": "colorido vibrante",
-        "Tons pastéis": "em tons suaves",
-        "Neutro e elegante": "em tons neutros",
-        "Preto sempre": "preto total"
-    }
-    look_final = f"{parte_cima} + {parte_baixo} + {calcado} ({cor_map[vibe_cor]})"
-    return look_final, None
+    if locomocao in ["A pé", "Transporte público"] and calçado_preferido == "Salto":
+        sapato = "tênis confortável"
 
-# BOTÃO DE GERAÇÃO
+    acess = []
+    if acessorios != "Prefiro evitar":
+        acess = random.sample(acessorios_por_estilo[estilo], 1)
+
+    look_texto = f"{topo} + {base} + {sapato} {cores[vibe_cor]}"
+    return look_texto, acess
+
+# GERAR LOOK
 if st.button("🔮 Me dá meu look!"):
-    look, imagem_look = montar_look()
+    look, acessorios_escolhidos = montar_look()
+    
+    st.subheader(f"✅ Look ideal para {ocasião}")
+    st.write(f"👉 {look}")
+    
+    if acessorios_escolhidos:
+        st.write("✨ Acessório sugerido: " + ", ".join(acessorios_escolhidos))
 
-    st.markdown(f"## ✅ Seu look ideal para {ocasião}")
-    st.write(f"👗 Sugestão: {look}")
     st.write(f"🎯 Estilo: {estilo} | ☁ Clima: {clima} | 🧠 Humor: {humor}")
     st.write(f"🕒 Tempo fora: {tempo_fora} | 🚗 Transporte: {locomocao}")
-    st.write(f"🎨 Vibe de cor: {vibe_cor}")
 
-    if imagem_look:
-        st.image(imagem_look, caption=f"Inspiração para {ocasião}", use_column_width=True)
-
-    if foto:
-        st.image(foto, caption="Sua vibe de hoje!", use_column_width=True)
-
-    if acessorios != "Prefiro evitar":
-        acessorios_escolhidos = random.sample(acessorios_por_estilo[estilo], 2)
-        st.markdown("### ✨ Acessórios que combinam com seu estilo:")
-        st.write("• " + "\n• ".join(acessorios_escolhidos))
-    else:
-        acessorios_escolhidos = []
-
-    st.markdown("### 🎨 Paleta de cores para hoje:")
-    st.image(paletas[clima], use_column_width=True)
-
-   if st.checkbox("💾 Quero salvar meu look"):
+    # SALVAR LOOK
+    if st.checkbox("💾 Quero salvar meu look"):
         buffer = io.StringIO()
         buffer.write("👗 LOOK SALVO\n")
         buffer.write(f"Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n")
-        buffer.write(f"Ocasião: {ocasião}\n")
-        buffer.write(f"Estilo: {estilo}\n")
-        buffer.write(f"Clima: {clima}\n")
+        buffer.write(f"Ocasião: {ocasião}\nEstilo: {estilo}\nClima: {clima}\n")
         buffer.write(f"Look: {look}\n")
-        buffer.write(f"Cor: {vibe_cor}\n")
-        acess = ', '.join(acessorios_escolhidos) if acessorios_escolhidos else 'Nenhum'
-        buffer.write(f"Acessórios: {acess}\n")
+        acess_str = ", ".join(acessorios_escolhidos) if acessorios_escolhidos else "Nenhum"
+        buffer.write(f"Acessórios: {acess_str}\n")
 
         st.download_button(
             label="📥 Baixar meu look",
