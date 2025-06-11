@@ -3,12 +3,12 @@ import random
 import io
 from datetime import datetime
 
-# CONFIGURAÇÃO DA PÁGINA
+# CONFIG PÁGINA
 st.set_page_config(page_title="Recomendador de Looks", page_icon="👗", layout="centered")
 st.title("👗 Recomendador de Looks Personalizado")
 st.markdown("Responda algumas perguntas e receba uma sugestão de look com a sua cara!")
 
-# PERGUNTAS
+# PERGUNTAS DO FORMULÁRIO
 ocasião = st.selectbox("1️⃣ Qual a ocasião?", [ 
     "Faculdade", "Escola", "Shopping", "Date", "Praia",
     "Festa / Balada", "Piquenique", "Museu", "Brunch",
@@ -49,7 +49,7 @@ acessorios = st.radio("9️⃣ Curte usar acessórios?", [
 
 foto = st.file_uploader("📷 Quer subir uma foto pra gente entender sua vibe de hoje?", type=["jpg", "jpeg", "png"])
 
-# ACESSÓRIOS POR ESTILO
+# BASES DE DADOS
 acessorios_por_estilo = {
     "Básico": ["argolas pequenas", "relógio simples", "bolsa transversal"],
     "Fashionista": ["óculos escuros estilosos", "brincos grandes", "cinto marcante"],
@@ -58,7 +58,6 @@ acessorios_por_estilo = {
     "Despojado": ["pulseira de miçanga", "anel colorido", "bucket hat"]
 }
 
-# PALETAS DE CORES
 paletas = {
     "Calor": "https://i.pinimg.com/564x/67/ff/4a/67ff4a35439c31ea2ab53d5eb7e5a0ae.jpg",
     "Frio": "https://i.pinimg.com/564x/94/49/ba/9449ba7bcb305108de7bde1e43ff635e.jpg",
@@ -66,19 +65,16 @@ paletas = {
     "Chuvoso": "https://i.pinimg.com/564x/79/23/95/792395b59bc25295a2798029e14f2cb1.jpg"
 }
 
-# IMAGENS DE EXEMPLO
 imagens_ocasião = {
     "Date": "https://i.pinimg.com/564x/80/6b/ba/806bbad4eec9f2fef0bc646118c6ec2c.jpg",
     "Teatro": "https://i.pinimg.com/564x/57/ef/2c/57ef2c2bfe1a1d23cb9c14850c0131fc.jpg"
 }
 
-# SUGESTÕES ESPECIAIS
 sugestoes_exclusivas = {
     "Date": "Vestido midi + sandália delicada + bolsa pequena",
     "Teatro": "Macacão elegante + blazer + sapato fechado"
 }
 
-# PARTES DE CIMA
 partes_de_cima = {
     "Calor": ["Regata soltinha", "Cropped leve", "Blusa ciganinha"],
     "Frio": ["Blusa de lã", "Tricô oversized", "Moletom estiloso"],
@@ -86,7 +82,6 @@ partes_de_cima = {
     "Chuvoso": ["Capa estilosa", "Jaqueta impermeável", "Blusa com capuz"]
 }
 
-# PARTES DE BAIXO
 partes_de_baixo = {
     "Básico": ["calça jeans", "short jeans", "legging"],
     "Fashionista": ["calça cargo", "saia midi", "minissaia de couro"],
@@ -95,7 +90,6 @@ partes_de_baixo = {
     "Despojado": ["bermuda jeans", "calça rasgada", "short estampado"]
 }
 
-# CALÇADOS
 calçados_por_estilo = {
     "Tênis": ["tênis branco", "tênis plataforma", "tênis chunky"],
     "Sandália": ["rasteirinha", "sandália plataforma", "sandália de tiras"],
@@ -104,21 +98,47 @@ calçados_por_estilo = {
     "Tanto faz": ["tênis estiloso", "sandália confortável", "bota leve"]
 }
 
+# LÓGICA DE RECOMENDAÇÃO
+def montar_look():
+    if ocasião in sugestoes_exclusivas:
+        return sugestoes_exclusivas[ocasião], imagens_ocasião.get(ocasião)
+
+    parte_cima = random.choice(partes_de_cima[clima])
+    parte_baixo = random.choice(partes_de_baixo[estilo])
+    calcado = random.choice(calçados_por_estilo[calçado_preferido])
+
+    # Ajuste por HUMOR
+    if humor == "Preguiçosa":
+        parte_cima = "Camiseta oversized"
+        parte_baixo = "Moletom estiloso"
+    elif humor == "Pronta pra brilhar":
+        parte_cima += " com brilho"
+    
+    # Ajuste por LOCOMOÇÃO
+    if locomocao in ["A pé", "Transporte público"] and calçado_preferido == "Salto":
+        calcado = "tênis confortável"
+
+    # Ajuste por TEMPO FORA
+    if tempo_fora == "O dia inteiro":
+        parte_cima += " + sobreposição leve"
+
+    # VIBE DE COR
+    cor_map = {
+        "Coloridão": "colorido vibrante",
+        "Tons pastéis": "em tons suaves",
+        "Neutro e elegante": "em tons neutros",
+        "Preto sempre": "preto total"
+    }
+    look_final = f"{parte_cima} + {parte_baixo} + {calcado} ({cor_map[vibe_cor]})"
+    return look_final, None
+
 # BOTÃO DE GERAÇÃO
 if st.button("🔮 Me dá meu look!"):
-    if ocasião in sugestoes_exclusivas:
-        look = sugestoes_exclusivas[ocasião]
-        imagem_look = imagens_ocasião[ocasião]
-    else:
-        parte_cima = random.choice(partes_de_cima[clima])
-        parte_baixo = random.choice(partes_de_baixo[estilo])
-        calcado = random.choice(calçados_por_estilo[calçado_preferido])
-        look = f"{parte_cima} + {parte_baixo} + {calcado}"
-        imagem_look = None
+    look, imagem_look = montar_look()
 
-    st.markdown(f"## ✅ Seu look ideal para *{ocasião}*")
+    st.markdown(f"## ✅ Seu look ideal para {ocasião}")
     st.write(f"👗 Sugestão: {look}")
-    st.write(f"🎯 Estilo: {estilo} | ☁️ Clima: {clima} | 🧠 Humor: {humor}")
+    st.write(f"🎯 Estilo: {estilo} | ☁ Clima: {clima} | 🧠 Humor: {humor}")
     st.write(f"🕒 Tempo fora: {tempo_fora} | 🚗 Transporte: {locomocao}")
     st.write(f"🎨 Vibe de cor: {vibe_cor}")
 
@@ -138,7 +158,6 @@ if st.button("🔮 Me dá meu look!"):
     st.markdown("### 🎨 Paleta de cores para hoje:")
     st.image(paletas[clima], use_column_width=True)
 
-    # BOTÃO PARA BAIXAR
     if st.checkbox("💾 Quero salvar meu look"):
         buffer = io.StringIO()
         buffer.write("👗 LOOK SALVO\n")
@@ -147,4 +166,4 @@ if st.button("🔮 Me dá meu look!"):
         buffer.write(f"Look: {look}\n")
         buffer.write(f"Cor: {vibe_cor}\n")
         buffer.write(f"Acessórios: {', '.join(acessorios_escolhidos) if acessorios_escolhidos else 'Nenhum'}\n")
-        st.download_button("📥 Baixar meu look", data=buffer.getvalue(), file_name="meu_look.txt", mime="text/plain")
+        st.download_button("📥 Baixar meu look", data=buffer.getvalue(), file_name="meu_look.txt", mime="text/plain"
