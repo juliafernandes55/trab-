@@ -9,7 +9,7 @@ st.title("👗 Recomendador de Looks Personalizado")
 st.markdown("Responda algumas perguntas e receba uma sugestão de look com a sua cara!")
 
 # PERGUNTAS
-ocasião = st.selectbox("1️⃣ Qual a ocasião?", [
+ocasião = st.selectbox("1️⃣ Qual a ocasião?", [ 
     "Faculdade", "Escola", "Shopping", "Date", "Praia",
     "Festa / Balada", "Piquenique", "Museu", "Brunch",
     "Churrasco", "Cinema", "Teatro"
