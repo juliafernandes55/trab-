@@ -158,12 +158,21 @@ if st.button("🔮 Me dá meu look!"):
     st.markdown("### 🎨 Paleta de cores para hoje:")
     st.image(paletas[clima], use_column_width=True)
 
-    if st.checkbox("💾 Quero salvar meu look"):
+   if st.checkbox("💾 Quero salvar meu look"):
         buffer = io.StringIO()
         buffer.write("👗 LOOK SALVO\n")
         buffer.write(f"Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n")
-        buffer.write(f"Ocasião: {ocasião}\nEstilo: {estilo}\nClima: {clima}\n")
+        buffer.write(f"Ocasião: {ocasião}\n")
+        buffer.write(f"Estilo: {estilo}\n")
+        buffer.write(f"Clima: {clima}\n")
         buffer.write(f"Look: {look}\n")
         buffer.write(f"Cor: {vibe_cor}\n")
-        buffer.write(f"Acessórios: {', '.join(acessorios_escolhidos) if acessorios_escolhidos else 'Nenhum'}\n")
-        st.download_button("📥 Baixar meu look", data=buffer.getvalue(), file_name="meu_look.txt", mime="text/plain"
+        acess = ', '.join(acessorios_escolhidos) if acessorios_escolhidos else 'Nenhum'
+        buffer.write(f"Acessórios: {acess}\n")
+
+        st.download_button(
+            label="📥 Baixar meu look",
+            data=buffer.getvalue(),
+            file_name="meu_look.txt",
+            mime="text/plain"
+        )
