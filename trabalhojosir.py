@@ -138,15 +138,143 @@ if st.button("🔮 Me dá meu look!"):
             file_name="meu_look.txt",
             mime="text/plain"
         )
-!pip install -U -q "google"
-!pip install -U -q "google.genai"
+import streamlit as st
+import google.generativeai as genai
+# Título da página
+st.set_page_config(page_title="Chat com IA - Gemini", layout="centered")
+st.title("💬 Chat com a IA da Google (Gemini)")
+# Campo para digitar a API Key
+api_key = st.text_input("Digite sua chave da API Gemini", type="password")
+# Campo para digitar a pergunta
+user_input = st.text_area("Digite sua pergunta:")
+# Botão para enviar
+if st.button("Enviar"):
+   if not api_key:
+       st.warning("Por favor, insira sua chave da API.")
+   elif not user_input.strip():
+       st.warning("Digite algo para a IA responder.")
+   else:
+       try:
+           # Configurar a API com a chave informada
+           genai.configure(api_key=api_key)
+           # Selecionar o modelo
+           model = genai.GenerativeModel("gemini-pro")
+           # Fazer a geração
+           response = model.generate_content(user_input)
+           # Mostrar a resposta
+           st.subheader("Resposta da IA:")
+           st.write(response.text)
+       except Exception as e:
+           st.error(f"Erro: {e}")
+           import streamlit as st
+import google.generativeai as genai
+# Título da página
+st.set_page_config(page_title="Chat com IA - Gemini", layout="centered")
+st.title("💬 Chat com a IA da Google (Gemini)")
+# Campo para digitar a API Key
+api_key = st.text_input("Digite sua chave da API Gemini", type="password")
+# Campo para digitar a pergunta
+user_input = st.text_area("Digite sua pergunta:")
+# Botão para enviar
+if st.button("Enviar"):
+   if not api_key:
+       st.warning("Por favor, insira sua chave da API.")
+   elif not user_input.strip():
+       st.warning("Digite algo para a IA responder.")
+   else:
+       try:
+           # Configurar a API com a chave informada
+           genai.configure(api_key=api_key)
+           # Selecionar o modelo
+           model = genai.GenerativeModel("gemini-pro")
+           # Fazer a geração
+           response = model.generate_content(user_input)
+           # Mostrar a resposta
+           st.subheader("Resposta da IA:")
+           st.write(response.text)
+       except Exception as e:
+           st.error(f"Erro: {e}")
+           import streamlit as st
+import google.generativeai as genai
+# Título da página
+st.set_page_config(page_title="Chat com IA - Gemini", layout="centered")
+st.title("💬 Chat com a IA da Google (Gemini)")
+# Campo para digitar a API Key
+api_key = st.text_input("Digite sua chave da API Gemini", type="password")
+# Campo para digitar a pergunta
+user_input = st.text_area("Digite sua pergunta:")
+# Botão para enviar
+if st.button("Enviar"):
+   if not api_key:
+       st.warning("Por favor, insira sua chave da API.")
+   elif not user_input.strip():
+       st.warning("Digite algo para a IA responder.")
+   else:
+       try:
+           # Configurar a API com a chave informada
+           genai.configure(api_key=api_key)
+           # Selecionar o modelo
+           model = genai.GenerativeModel("gemini-pro")
+           # Fazer a geração
+           response = model.generate_content(user_input)
+           # Mostrar a resposta
+           st.subheader("Resposta da IA:")
+           st.write(response.text)
+       except Exception as e:
+           st.error(f"Erro: {e}")
+           import streamlit as st
 
-import os
-# bibliotecas do Google
-from google.colab import userdata
-from google.colab import drive
+import google.generativeai as genai
 
-# grava no sistema operacional a chave
-os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")
+# Título da página
 
-drive.mount("/content/drive")
+st.set_page_config(page_title="Chat com IA - Gemini", layout="centered")
+
+st.title("💬 Chat com a IA da Google (Gemini)")
+
+# Campo para digitar a API Key
+
+api_key = st.text_input("Digite sua chave da API Gemini", type="password")
+
+# Campo para digitar a pergunta
+
+user_input = st.text_area("Digite sua pergunta:")
+
+# Botão para enviar
+
+if st.button("Enviar"):
+
+    if not api_key:
+
+        st.warning("Por favor, insira sua chave da API.")
+
+    elif not user_input.strip():
+
+        st.warning("Digite algo para a IA responder.")
+
+    else:
+
+        try:
+
+            # Configurar a API com a chave informada
+
+            genai.configure(api_key=api_key)
+
+            # Selecionar o modelo
+
+            model = genai.GenerativeModel("gemini-pro")
+
+            # Fazer a geração
+
+            response = model.generate_content(user_input)
+
+            # Mostrar a resposta
+
+            st.subheader("Resposta da IA:")
+
+            st.write(response.text)
+
+        except Exception as e:
+
+            st.error(f"Erro: {e}")
+ 
