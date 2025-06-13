@@ -138,3 +138,15 @@ if st.button("🔮 Me dá meu look!"):
             file_name="meu_look.txt",
             mime="text/plain"
         )
+!pip install -U -q "google"
+!pip install -U -q "google.genai"
+
+import os
+# bibliotecas do Google
+from google.colab import userdata
+from google.colab import drive
+
+# grava no sistema operacional a chave
+os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")
+
+drive.mount("/content/drive")
