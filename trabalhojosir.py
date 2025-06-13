@@ -223,6 +223,8 @@ if st.button("Enviar"):
        except Exception as e:
            st.error(f"Erro: {e}")
            import streamlit as st
+streamlit
+google-generativeai
 
 import google.generativeai as genai
 
