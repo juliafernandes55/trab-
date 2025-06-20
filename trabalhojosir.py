@@ -3,13 +3,12 @@ import random
 import io
 from datetime import datetime
 
-# Configuração geral da página
 st.set_page_config(page_title="Recomendador de Looks", page_icon="👗", layout="centered")
 
 st.title("👗 Recomendador de Looks Personalizado")
 st.markdown("Responda algumas perguntas e receba uma sugestão de look que combine perfeitamente com você!")
 
-# Perguntas do formulário
+# -------- PERGUNTAS --------
 ocasiao = st.selectbox("1️⃣ Qual a ocasião?", [
     "Faculdade", "Shopping", "Date", "Praia", "Festa / Balada",
     "Museu", "Brunch", "Churrasco", "Cinema", "Teatro"
@@ -47,36 +46,36 @@ acessorios = st.radio("9️⃣ Curte usar acessórios?", [
     "Sim, amo!", "Apenas alguns", "Prefiro evitar"
 ])
 
-# Banco de dados das peças
+# -------- BANCOS DE PEÇAS --------
 partes_cima = {
-    "Calor": ["regata soltinha", "cropped leve", "blusa de alça"],
-    "Frio": ["suéter quentinho", "blusa de gola alta", "moletom estiloso"],
-    "Ameno": ["camisa leve", "blusa de manga longa", "cardigan fofo"],
-    "Chuvoso": ["jaqueta impermeável", "capa estilosa", "blusa com capuz"]
+    "Calor": ["regata soltinha", "cropped leve", "top de alça"],
+    "Frio": ["suéter quentinho", "blusa de gola alta", "casaco peluciado"],
+    "Ameno": ["camisa de linho", "blusa de manga longa", "cardigan leve"],
+    "Chuvoso": ["jaqueta impermeável", "anorak estiloso", "blusa com capuz"]
 }
 
 partes_baixo = {
-    "Básico": ["jeans reto", "short jeans", "legging confortável"],
-    "Fashionista": ["saia midi estampada", "calça cargo", "minissaia de couro"],
-    "Esportivo": ["calça jogger", "short de treino", "legging com recortes"],
-    "Romântico": ["saia rodada", "vestido floral curto", "short de linho"],
-    "Despojado": ["calça rasgada", "short estampado", "bermuda jeans"]
+    "Básico": ["jeans reto", "calça legging", "short jeans"],
+    "Fashionista": ["calça cargo", "minissaia de couro", "saia midi estilosa"],
+    "Esportivo": ["short de treino", "calça jogger", "legging de academia"],
+    "Romântico": ["saia evasê", "vestido floral", "short de linho"],
+    "Despojado": ["calça rasgada", "bermuda jeans", "short estampado"]
 }
 
 calcados = {
-    "Tênis": ["tênis branco", "tênis chunky", "tênis plataforma"],
-    "Sandália": ["rasteirinha", "sandália plataforma", "sandália de tiras"],
-    "Salto": ["salto grosso", "scarpin", "salto bloco confortável"],
-    "Bota": ["coturno", "bota cano médio", "bota tratorada"],
-    "Tanto faz": ["tênis estiloso", "sandália confortável", "bota leve"]
+    "Tênis": ["tênis branco", "tênis esportivo", "tênis plataforma"],
+    "Sandália": ["rasteirinha", "sandália plataforma", "sandália tiras finas"],
+    "Salto": ["salto grosso", "salto bloco", "scarpin moderno"],
+    "Bota": ["coturno", "bota cano curto", "bota tratorada"],
+    "Tanto faz": ["tênis estiloso", "bota leve", "sandália confortável"]
 }
 
 acessorios_por_estilo = {
-    "Básico": ["relógio simples", "bolsa transversal"],
-    "Fashionista": ["óculos escuros estilosos", "brincos grandes"],
-    "Esportivo": ["boné", "mochilinha"],
-    "Romântico": ["colar delicado", "tiara ou presilha"],
-    "Despojado": ["pulseira de miçanga", "bucket hat"]
+    "Básico": ["mochila pequena", "relógio clean"],
+    "Fashionista": ["óculos escuros estilosos", "bolsa fashion"],
+    "Esportivo": ["boné esportivo", "pochete"],
+    "Romântico": ["colarzinho delicado", "tiara fofa"],
+    "Despojado": ["bucket hat", "colar com pingente divertido"]
 }
 
 cores = {
@@ -86,76 +85,68 @@ cores = {
     "Preto sempre": "em preto total 🖤"
 }
 
+# -------- FUNÇÃO PRINCIPAL --------
 def montar_look():
-    aviso = ""
-
-    # Bloqueio de combinações incoerentes
-    if clima in ["Chuvoso", "Frio"] and calcado_preferido == "Sandália":
-        aviso += "🚫 Sandália não é ideal para clima frio ou chuvoso. Substituindo por bota.\n"
-        calcado_escolhido = "Bota"
-    elif calcado_preferido == "Salto" and locomocao in ["A pé", "Transporte público"] and clima in ["Chuvoso", "Frio"]:
-        aviso += "🚫 Salto em clima ruim e locomoção a pé/transporte público não é ideal. Substituindo por tênis confortável.\n"
-        calcado_escolhido = "Tênis"
+    alerta = ""
+    # Substituições por incoerência
+    if clima in ["Frio", "Chuvoso"] and calcado_preferido == "Sandália":
+        alerta += "🚫 Sandália não combina com frio ou chuva. Substituímos por bota.\n"
+        calcado_final = "Bota"
+    elif calcado_preferido == "Salto" and locomocao in ["A pé", "Transporte público"] and clima in ["Frio", "Chuvoso"]:
+        alerta += "🚫 Salto com chuva e a pé não rola. Substituímos por tênis confortável.\n"
+        calcado_final = "Tênis"
     else:
-        calcado_escolhido = calcado_preferido
+        calcado_final = calcado_preferido
 
-    # Parte de cima baseada no clima
+    # Parte de cima
     topo = random.choice(partes_cima[clima])
 
-    # Parte de baixo baseada em estilo + clima
+    # Parte de baixo coerente
     if clima == "Frio":
-        if estilo == "Romântico":
-            base = "saia longa com meia-calça"
-        elif estilo == "Esportivo":
-            base = "legging térmica"
-        else:
-            base = "calça estilosa de inverno"
+        base = "calça quente ou saia com meia-calça"
     elif clima == "Chuvoso":
-        base = "calça prática e impermeável"
+        base = "calça impermeável ou jeans resistente"
     elif clima == "Calor":
-        base = random.choice([item for item in partes_baixo[estilo] if any(k in item for k in ["short", "saia", "vestido"])])
+        base = random.choice([b for b in partes_baixo[estilo] if "short" in b or "saia" in b or "vestido" in b])
     else:
         base = random.choice(partes_baixo[estilo])
 
     # Calçado final
-    if calcado_escolhido == "Salto" and locomocao in ["A pé", "Transporte público"]:
-        sapato = "tênis confortável"
-    else:
-        sapato = random.choice(calcados[calcado_escolhido])
+    sapato = random.choice(calcados[calcado_final])
 
     # Ajustes por humor
     if humor == "Preguiçosa":
         topo = "camiseta oversized"
-        base = "calça ou short de moletom"
+        base = "calça de moletom ou bermuda confortável"
     elif humor == "Pronta pra brilhar":
         topo += " com brilho ✨"
 
-    # Sobreposição se o dia for longo
+    # Sobreposição
     if tempo_fora == "O dia inteiro":
-        topo += " com sobreposição leve"
+        topo += " + sobreposição prática"
 
-    # Acessórios opcionais
+    # Acessórios
     acess = []
     if acessorios != "Prefiro evitar":
         acess = random.sample(acessorios_por_estilo[estilo], 1)
 
-    look_texto = f"{topo} + {base} + {sapato} {cores[vibe_cor]}"
-    return look_texto, acess, aviso
+    look = f"{topo} + {base} + {sapato} {cores[vibe_cor]}"
+    return look, acess, alerta
 
+# -------- EXECUÇÃO --------
 if st.button("🔮 Me dá meu look!"):
-    look, acessorios_escolhidos, alerta = montar_look()
+    look, acessorios_sugeridos, aviso = montar_look()
 
     st.subheader(f"✅ Look ideal para {ocasiao}")
     st.write(f"👉 {look}")
-
-    if acessorios_escolhidos:
-        st.write("✨ Acessório sugerido: " + ", ".join(acessorios_escolhidos))
+    if acessorios_sugeridos:
+        st.write(f"✨ Acessório sugerido: {', '.join(acessorios_sugeridos)}")
 
     st.write(f"🎯 Estilo: {estilo} | ☁ Clima: {clima} | 🧠 Humor: {humor}")
     st.write(f"🕒 Tempo fora: {tempo_fora} | 🚗 Transporte: {locomocao}")
 
-    if alerta:
-        st.warning(alerta.strip())
+    if aviso:
+        st.warning(aviso.strip())
 
     if st.checkbox("💾 Quero salvar meu look"):
         buffer = io.StringIO()
@@ -163,7 +154,7 @@ if st.button("🔮 Me dá meu look!"):
         buffer.write(f"Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n")
         buffer.write(f"Ocasião: {ocasiao}\nEstilo: {estilo}\nClima: {clima}\n")
         buffer.write(f"Look: {look}\n")
-        acess_str = ", ".join(acessorios_escolhidos) if acessorios_escolhidos else "Nenhum"
+        acess_str = ", ".join(acessorios_sugeridos) if acessorios_sugeridos else "Nenhum"
         buffer.write(f"Acessórios: {acess_str}\n")
 
         st.download_button(
@@ -172,6 +163,7 @@ if st.button("🔮 Me dá meu look!"):
             file_name="meu_look.txt",
             mime="text/plain"
         )
+
 
 
 
