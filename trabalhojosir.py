@@ -129,7 +129,7 @@ def montar_look():
     acess = []
     if acessorios != "Prefiro evitar":
         acess = random.sample(acessorios_por_estilo[estilo], 1)
-
+ 
     look = f"{topo} + {base} + {sapato} {cores[vibe_cor]}"
     return look, acess, alerta
 
